@@ -1,11 +1,19 @@
-import { Button } from "@/components/ui/button"
+import { createBrowserRouter, RouterProvider } from 'react-router'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import MainPage from './pages'
 
-function App() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-svh">
-      <Button>Click me</Button>
-    </div>
-  )
-}
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainPage />
+  },
+]);
 
-export default App
+const root = document.getElementById("root");
+
+ReactDOM.createRoot(root).render(
+  <RouterProvider router={router} />
+);
+
+export default App;
