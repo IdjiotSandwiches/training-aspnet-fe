@@ -9,14 +9,23 @@ export default function MainPage() {
   const [stnkList, setStnkList] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isOpen, setIsOpen] = React.useState(false);
-  const [stnk, setStnk] = React.useState();
+  const [stnk, setStnk] = React.useState({
+    carName: "",
+    carPrice: 0,
+    carType: 0,
+    engineSize: 0,
+    lastTaxPrice: 0,
+    ownerNIK: "",
+    ownerName: "",
+    registrationNumber: "",
+  });
 
-  const fetchAllStnk = async () => {
+  const fetch = async () => {
     try {
       const stnkList = await stnkApi.get(`/api/STNK/all-stnk`);
       const items = stnkList.data;
 
-      if (items.status != 200 || stnkList.status != 200) 
+      if (items.status != 200 || stnkList.status != 200)
         throw new Error(items ?? stnkList);
 
       setStnkList(items.data);
@@ -26,7 +35,7 @@ export default function MainPage() {
   };
 
   React.useEffect(() => {
-    fetchAllStnk();
+    fetch();
     setIsLoading(false);
   }, []);
 
@@ -37,8 +46,15 @@ export default function MainPage() {
       ) : (
         <>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <TableComponent stnkList={stnkList} setIsOpen={setIsOpen} setStnk={setStnk} />
-            <DialogComponent isOpen={isOpen} setIsOpen={setIsOpen} stnk={stnk} />
+            <TableComponent
+              stnkList={stnkList}
+              setIsOpen={setIsOpen}
+              setStnk={setStnk}
+            />
+            <DialogComponent
+              isOpen={isOpen}
+              stnk={stnk}
+            />
           </Dialog>
         </>
       )}
