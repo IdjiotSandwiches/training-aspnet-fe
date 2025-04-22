@@ -1,9 +1,8 @@
 import React from "react";
-import { toast } from "sonner";
-import { stnkApi } from "@/functions/apiClient";
 import { Dialog } from "@/components/ui/dialog";
 import DialogComponent from "@/components/dialog-component";
 import TableComponent from "@/components/table-component";
+import { fetchAllStnk } from "@/components/call-api";
 
 export default function MainPage() {
   const [stnkList, setStnkList] = React.useState([]);
@@ -20,22 +19,8 @@ export default function MainPage() {
     registrationNumber: "",
   });
 
-  const fetch = async () => {
-    try {
-      const stnkList = await stnkApi.get(`/api/STNK/all-stnk`);
-      const items = stnkList.data;
-
-      if (items.status != 200 || stnkList.status != 200)
-        throw new Error(items ?? stnkList);
-
-      setStnkList(items.data);
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
   React.useEffect(() => {
-    fetch();
+    fetchAllStnk(setStnkList);
     setIsLoading(false);
   }, []);
 

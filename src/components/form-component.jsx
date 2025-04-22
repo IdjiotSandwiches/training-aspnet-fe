@@ -2,8 +2,6 @@ import React from "react";
 import { Form } from "@/components/ui/form";
 import { DialogFooter } from "./ui/dialog";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { stnkApi } from "@/functions/apiClient";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -12,6 +10,7 @@ import {
   FormNumberInputField,
   FormSelectField,
 } from "./form-input-component";
+import { calcTax, fetchInit, updateStnk } from "./call-api";
 
 const formSchema = z.object({
   carName: z.string().min(2, {
@@ -26,23 +25,8 @@ export default function FormComponent({ stnk, isOpen }) {
   const [carType, setCarType] = React.useState([]);
   const [engineSize, setEngineSize] = React.useState([]);
 
-  const fetch = async () => {
-    try {
-      const init = await stnkApi.get(`api/STNK/init`);
-      const item = init.data;
-
-      if (item.status != 200 || init.status != 200)
-        throw new Error(item ?? init);
-
-      setCarType(item.data.carType);
-      setEngineSize(item.data.engineSize);
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
   React.useEffect(() => {
-    if (isOpen) fetch();
+    if (isOpen) fetchInit(setCarType, setEngineSize);
   }, [isOpen]);
 
   const form = useForm({
@@ -59,34 +43,8 @@ export default function FormComponent({ stnk, isOpen }) {
     },
   });
 
-  const calcTax = async () => {
-    const values = form.getValues();
-
-    const params = new URLSearchParams({
-      carType: values.carType.toString(),
-      engineSize: values.engineSize.toString(),
-      carPrice: values.carPrice.toString(),
-      ownerName: values.ownerName.toString(),
-      registrationNumber: values.registrationNumber.toString(),
-    });
-
-    try {
-      const tax = await stnkApi.get(
-        `/api/STNK/calculate-tax?${params.toString()}`
-      );
-      const item = tax.data;
-
-      if (item.status != 200 || tax.status != 200) throw new Error(item ?? tax);
-
-      form.setValue("lastTaxPrice", item.data);
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
-  const onSubmit = (values) => {
-    console.log(values)
-  };
+  const onSubmit = (values) => updateStnk(values, form);
+  const handleCalcTax = () => calcTax(form);
 
   return (
     <div className="grid gap-4 py-4">
@@ -103,7 +61,7 @@ export default function FormComponent({ stnk, isOpen }) {
                 form={form}
                 isDisabled={stnk.registrationNumber != ""}
                 label={"Owner Name"}
-                onChange={() => calcTax()}
+                onChange={() => handleCalcTax()}
               />
             </div>
             <div className="sm:col-span-7">
@@ -121,7 +79,7 @@ export default function FormComponent({ stnk, isOpen }) {
                 form={form}
                 label={"Car Type"}
                 list={carType}
-                onChange={() => calcTax()}
+                onChange={() => handleCalcTax()}
               />
             </div>
             <div className="sm:col-span-6">
@@ -129,14 +87,14 @@ export default function FormComponent({ stnk, isOpen }) {
                 form={form}
                 label={"Engine Size"}
                 list={engineSize}
-                onChange={() => calcTax()}
+                onChange={() => handleCalcTax()}
               />
             </div>
           </div>
           <FormNumberInputField
             form={form}
             label={"Car Price"}
-            onChange={() => calcTax()}
+            onChange={() => handleCalcTax()}
           />
           <FormNumberInputField
             form={form}

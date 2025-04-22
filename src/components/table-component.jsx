@@ -6,24 +6,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { stnkApi } from "@/functions/apiClient";
-import { toast } from "sonner";
+import { fetchStnk } from "./call-api";
 
 export default function TableComponent({ stnkList, setIsOpen, setStnk }) {
-  const fetch = async (registrationNumber) => {
-    try {
-      const stnk = await stnkApi.get(`api/STNK/${registrationNumber}`);
-      const item = stnk.data;
-
-      if (item.status != 200 || stnk.status != 200)
-        throw new Error(item ?? stnk);
-
-      setStnk(item.data);
-      setIsOpen(true);
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+  const handleFetch = (registrationNumber) => fetchStnk(registrationNumber, setIsOpen, setStnk);
 
   return (
     <Table>
@@ -42,7 +28,7 @@ export default function TableComponent({ stnkList, setIsOpen, setStnk }) {
               <TableCell className="font-medium">{idx + 1}</TableCell>
               <TableCell>
                 <span
-                  onClick={() => fetch(stnk.registrationNumber)}
+                  onClick={() => handleFetch(stnk.registrationNumber)}
                   className="hover:underline hover:cursor-pointer"
                 >
                   {stnk.registrationNumber}
