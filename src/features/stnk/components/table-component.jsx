@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import { UseStnk } from "../context/stnk-context";
 import { fetchAllStnk } from "../api/apiClient";
+import { TypographyH4 } from "@/components/ui/typography";
 
 function TableBodyItems({ stnkList }) {
   const { openDialog, setRegistrationNumber } = UseStnk();
@@ -16,7 +17,16 @@ function TableBodyItems({ stnkList }) {
   const triggerDialog = (registrationNumber) => {
     openDialog();
     setRegistrationNumber(registrationNumber);
-  }
+  };
+
+  if (stnkList.length < 1)
+    return (
+      <TableRow>
+        <TableCell colSpan={4} className="text-center py-4">
+          <TypographyH4>Data Empty</TypographyH4>
+        </TableCell>
+      </TableRow>
+    );
 
   return (
     <>
