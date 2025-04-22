@@ -59,7 +59,34 @@ export default function FormComponent({ stnk, isOpen }) {
     },
   });
 
-  const onSubmit = (values) => {};
+  const calcTax = async () => {
+    const values = form.getValues();
+
+    const params = new URLSearchParams({
+      carType: values.carType.toString(),
+      engineSize: values.engineSize.toString(),
+      carPrice: values.carPrice.toString(),
+      ownerName: values.ownerName.toString(),
+      registrationNumber: values.registrationNumber.toString(),
+    });
+
+    try {
+      const tax = await stnkApi.get(
+        `/api/STNK/calculate-tax?${params.toString()}`
+      );
+      const item = tax.data;
+
+      if (item.status != 200 || tax.status != 200) throw new Error(item ?? tax);
+
+      form.setValue("lastTaxPrice", item.data);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const onSubmit = (values) => {
+    console.log(values)
+  };
 
   return (
     <div className="grid gap-4 py-4">
@@ -76,6 +103,7 @@ export default function FormComponent({ stnk, isOpen }) {
                 form={form}
                 isDisabled={stnk.registrationNumber != ""}
                 label={"Owner Name"}
+                onChange={() => calcTax()}
               />
             </div>
             <div className="sm:col-span-7">
@@ -89,17 +117,27 @@ export default function FormComponent({ stnk, isOpen }) {
           <FormInputField form={form} label={"Car Name"} />
           <div className="grid sm:grid-cols-12 gap-4">
             <div className="sm:col-span-6">
-              <FormSelectField form={form} label={"Car Type"} list={carType} />
+              <FormSelectField
+                form={form}
+                label={"Car Type"}
+                list={carType}
+                onChange={() => calcTax()}
+              />
             </div>
             <div className="sm:col-span-6">
               <FormSelectField
                 form={form}
                 label={"Engine Size"}
                 list={engineSize}
+                onChange={() => calcTax()}
               />
             </div>
           </div>
-          <FormNumberInputField form={form} label={"Car Price"} />
+          <FormNumberInputField
+            form={form}
+            label={"Car Price"}
+            onChange={() => calcTax()}
+          />
           <FormNumberInputField
             form={form}
             label={"Last Tax Price"}

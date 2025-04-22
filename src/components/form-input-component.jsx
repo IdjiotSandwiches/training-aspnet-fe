@@ -39,25 +39,44 @@ function FormFieldLayout({ form, label, children }) {
   );
 }
 
-function FormInputField({ label, isDisabled = false, form }) {
-  return (
-    <FormFieldLayout form={form} label={label}>
-      {(field) => <Input placeholder="" {...field} disabled={isDisabled} />}
-    </FormFieldLayout>
-  );
-}
-
-function FormNumberInputField({ label, isDisabled = false, form }) {
+function FormInputField({ label, isDisabled = false, form, onChange }) {
   return (
     <FormFieldLayout form={form} label={label}>
       {(field) => (
-        <Input placeholder="" {...field} disabled={isDisabled} type="number" />
+        <Input
+          placeholder=""
+          {...field}
+          disabled={isDisabled}
+          onChange={(e) => {
+            field.onChange(e);
+            if (onChange) onChange(e);
+          }}
+        />
       )}
     </FormFieldLayout>
   );
 }
 
-function FormSelectField({ label, isDisabled = false, form, list }) {
+function FormNumberInputField({ label, isDisabled = false, form, onChange }) {
+  return (
+    <FormFieldLayout form={form} label={label}>
+      {(field) => (
+        <Input
+          placeholder=""
+          {...field}
+          disabled={isDisabled}
+          type="number"
+          onChange={(e) => {
+            field.onChange(e.target.valueAsNumber);
+            if (onChange) onChange(e.target.valueAsNumber);
+          }}
+        />
+      )}
+    </FormFieldLayout>
+  );
+}
+
+function FormSelectField({ label, isDisabled = false, form, list, onChange }) {
   const camelCase = camalize(label);
   const lowerCase = label.toLowerCase();
 
@@ -66,7 +85,10 @@ function FormSelectField({ label, isDisabled = false, form, list }) {
       {(field) => (
         <Select
           value={field.value}
-          onValueChange={(val) => field.onChange(Number(val))}
+          onValueChange={(e) => {
+            field.onChange(Number(e))
+            if (onChange) onChange(e)
+          }}
           disabled={isDisabled}
         >
           <SelectTrigger id={camelCase} className="w-full">
