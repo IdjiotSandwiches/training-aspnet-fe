@@ -113,7 +113,7 @@ function FormInput({ stnk, carType, engineSize }) {
             isDisabled={true}
           />
           <DialogFooter>
-            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            <Button type="submit" className="w-full cursor-pointer disabled:cursor-not-allowed" disabled={form.formState.isSubmitting}>
               Save changes
             </Button>
           </DialogFooter>

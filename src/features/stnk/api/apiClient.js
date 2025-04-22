@@ -62,7 +62,7 @@ const updateStnk = async (values, registrationNumber) => {
     if (item.status != 200 || update.status != 200)
       throw new Error(item ?? update);
 
-    toast.success(item.message);
+    toast.success("STNK updated successfully.");
   } catch (error) {
     toast.error(error.message);
   }
@@ -77,7 +77,7 @@ const insertStnk = async (values) => {
     if (item.status != 200 || insert.status != 200)
       throw new Error(item ?? insert);
 
-    toast.success(item.message);
+    toast.success("STNK created successfully.");
   } catch (error) {
     toast.error(error.message);
   }
