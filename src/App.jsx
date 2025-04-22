@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import React from 'react'
 import { Toaster } from 'sonner'
-import MainPage from './pages'
+import MainPage from './pages/MainPage'
 
 function App() {
   const router = createBrowserRouter([

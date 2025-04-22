@@ -1,15 +1,20 @@
-import { stnkApi } from "@/functions/apiClient";
+import axios from "axios";
 import { toast } from "sonner";
 
-const calcTax = async (form) => {
-  const values = form.getValues();
+const stnkApi = axios.create({
+  baseURL: import.meta.env.VITE_STNK_SERVICE,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
+const calcTax = async (values) => {
   const params = new URLSearchParams({
-    carType: values.carType.toString(),
-    engineSize: values.engineSize.toString(),
-    carPrice: values.carPrice.toString(),
-    ownerName: values.ownerName.toString(),
-    registrationNumber: values.registrationNumber.toString(),
+    carType: values?.carType.toString() || 0,
+    engineSize: values?.engineSize.toString() || 0,
+    carPrice: values?.carPrice.toString() || 0,
+    ownerName: values?.ownerName.toString() || "",
+    registrationNumber: values?.registrationNumber.toString() || "",
   });
 
   try {
@@ -18,31 +23,33 @@ const calcTax = async (form) => {
     );
     const item = tax.data;
 
-    if (item.status != 200 || tax.status != 200) throw new Error(item ?? tax);
+    if (item.status != 200 || tax.status != 200) 
+      throw new Error(item ?? tax);
 
-    form.setValue("lastTaxPrice", item.data);
+    return item.data;
   } catch (error) {
     toast.error(error.message);
+    return null;
   }
 };
 
-const fetchInit = async (setCarType, setEngineSize) => {
+const fetchInit = async () => {
   try {
     const init = await stnkApi.get(`api/STNK/init`);
     const item = init.data;
 
     if (item.status != 200 || init.status != 200) throw new Error(item ?? init);
 
-    setCarType(item.data.carType);
-    setEngineSize(item.data.engineSize);
+    return item.data;
   } catch (error) {
     toast.error(error.message);
+    return null;
   }
 };
 
-const updateStnk = async (values, form) => {
+const updateStnk = async (values, registrationNumber) => {
   const params = new URLSearchParams({
-    registrationNumber: form.getValues().registrationNumber.toString(),
+    registrationNumber: registrationNumber,
   });
 
   try {
@@ -62,21 +69,20 @@ const updateStnk = async (values, form) => {
   }
 };
 
-const fetchStnk = async (registrationNumber, setIsOpen, setStnk) => {
+const fetchStnk = async (registrationNumber) => {
   try {
     const stnk = await stnkApi.get(`api/STNK/${registrationNumber}`);
     const item = stnk.data;
 
     if (item.status != 200 || stnk.status != 200) throw new Error(item ?? stnk);
-
-    setStnk(item.data);
-    setIsOpen(true);
+    return item.data;
   } catch (error) {
     toast.error(error.message);
+    return null;
   }
 };
 
-const fetchAllStnk = async (setStnkList) => {
+const fetchAllStnk = async () => {
   try {
     const stnkList = await stnkApi.get(`/api/STNK/all-stnk`);
     const items = stnkList.data;
@@ -84,9 +90,10 @@ const fetchAllStnk = async (setStnkList) => {
     if (items.status != 200 || stnkList.status != 200)
       throw new Error(items ?? stnkList);
 
-    setStnkList(items.data);
+    return items.data;
   } catch (error) {
     toast.error(error.message);
+    return null;
   }
 };
 

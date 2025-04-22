@@ -4,14 +4,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "./ui/dialog";
-import FormComponent from "./form-component";
+} from "../../../components/ui/dialog";
+import { FormComponent } from "./form-component";
+import { UseStnk } from "../context/stnk-context";
 
-export default function DialogComponent({ stnk, isOpen }) {
+function DialogComponent() {
+  const { registrationNumber } = UseStnk();
+
   return (
     <DialogContent className="sm:max-w-2xl">
       <DialogHeader>
-        {stnk.registrationNumber == "" ? (
+        {registrationNumber == "" ? (
           <>
             <DialogTitle>Insert STNK</DialogTitle>
             <DialogDescription>
@@ -27,7 +30,9 @@ export default function DialogComponent({ stnk, isOpen }) {
           </>
         )}
       </DialogHeader>
-      <FormComponent stnk={stnk} isOpen={isOpen} />
+      <FormComponent />
     </DialogContent>
   );
 }
+
+export { DialogComponent };
