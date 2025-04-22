@@ -23,8 +23,7 @@ const calcTax = async (values) => {
     );
     const item = tax.data;
 
-    if (item.status != 200 || tax.status != 200) 
-      throw new Error(item ?? tax);
+    if (item.status != 200 || tax.status != 200) throw new Error(item ?? tax);
 
     return item.data;
   } catch (error) {
@@ -69,6 +68,21 @@ const updateStnk = async (values, registrationNumber) => {
   }
 };
 
+const insertStnk = async (values) => {
+  try {
+    const insert = await stnkApi.post(`/api/STNK/insert`, values);
+
+    const item = insert.data;
+
+    if (item.status != 200 || insert.status != 200)
+      throw new Error(item ?? insert);
+
+    toast.success(item.message);
+  } catch (error) {
+    toast.error(error.message);
+  }
+};
+
 const fetchStnk = async (registrationNumber) => {
   try {
     const stnk = await stnkApi.get(`api/STNK/${registrationNumber}`);
@@ -97,4 +111,4 @@ const fetchAllStnk = async () => {
   }
 };
 
-export { calcTax, fetchInit, updateStnk, fetchStnk, fetchAllStnk };
+export { calcTax, fetchInit, updateStnk, insertStnk, fetchStnk, fetchAllStnk };

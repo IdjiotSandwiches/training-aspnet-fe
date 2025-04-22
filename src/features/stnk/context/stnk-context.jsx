@@ -10,12 +10,11 @@ function StnkProvider({ children }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [refreshKey, setRefreshKey] = React.useState(0);
   const [registrationNumber, setRegistrationNumber] = React.useState("");
+  const [isError, setIsError] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const openDialog = () => setIsOpen(true);
-  const closeDialog = () => {
-    setIsOpen(false);
-    setRegistrationNumber("");
-  };
+  const closeDialog = () => setIsOpen(false);
   const triggerRefresh = () => setRefreshKey((prev) => prev + 1);
 
   return (
@@ -28,7 +27,11 @@ function StnkProvider({ children }) {
         refreshKey,
         triggerRefresh,
         registrationNumber,
-        setRegistrationNumber
+        setRegistrationNumber,
+        isError,
+        setIsError,
+        isLoading,
+        setIsLoading
       }}
     >
       {children}

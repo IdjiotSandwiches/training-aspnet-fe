@@ -3,29 +3,20 @@ import { Dialog } from "@/components/ui/dialog";
 import { TableComponent } from "@/features/stnk/components/table-component";
 import { DialogComponent } from "@/features/stnk/components/dialog-component";
 import { StnkProvider, UseStnk } from "@/features/stnk/context/stnk-context";
+import { Button } from "@/components/ui/button";
 
 function View() {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const { isOpen, setIsOpen } = UseStnk();
-  // const [stnk, setStnk] = React.useState({
-  //   carName: "",
-  //   carPrice: 0,
-  //   carType: 0,
-  //   engineSize: 0,
-  //   lastTaxPrice: 0,
-  //   ownerNIK: "",
-  //   ownerName: "",
-  //   registrationNumber: "",
-  // });
+  const { isOpen, setIsOpen, openDialog, setRegistrationNumber } = UseStnk();
 
-  // React.useEffect(() => {
-  //   fetchAllStnk(setStnkList);
-  //   setIsLoading(false);
-  // }, []);
+  const insert = () => {
+    openDialog();
+    setRegistrationNumber("");
+  };
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Button onClick={insert}>Insert</Button>
         <TableComponent />
         <DialogComponent />
       </Dialog>
