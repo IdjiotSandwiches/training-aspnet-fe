@@ -38,17 +38,21 @@ function FormInput({ stnk, carType, engineSize }) {
     form.reset(stnk)
   }, [stnk]);
 
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     if (registrationNumber == "")
-      insertStnk(values);
+      await insertStnk(values);
     else
-      updateStnk(values, registrationNumber);
+      await updateStnk(values, registrationNumber);
     closeDialog();
     triggerRefresh();
   };
 
   const handleCalcTax = React.useCallback(async () => {
-    const tax = await calcTax(form.getValues());
+    const formVal = form.getValues();
+    if (!formVal.ownerName || !formVal.carType || !formVal.engineSize || formVal.carPrice == 0)
+      return;
+
+    const tax = await calcTax(formVal);
     if (tax) form.setValue("lastTaxPrice", tax);
     else form.setValue("lastTaxPrice", 0);
   }, [form]);

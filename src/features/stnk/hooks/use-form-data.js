@@ -6,7 +6,7 @@ function useFormData() {
   const { registrationNumber, setIsError, setIsLoading } = UseStnk();
   const [stnk, setStnk] = React.useState({
     carName: "",
-    carPrice: 0,
+    carPrice: "",
     carType: 0,
     engineSize: 0,
     lastTaxPrice: 0,
